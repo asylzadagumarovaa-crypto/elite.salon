@@ -1,0 +1,365 @@
+<!--
+Elite Beauty Salon - Single Page Business Website
+File: elite-salon.html
+Instructions:
+1. Save this file as `elite-salon.html` and open in VS Code.
+2. Use the Live Server extension or open in browser to preview.
+3. Edit text, images (placeholders used), and colors as needed.
+
+Features included:
+- Colorful, modern hero section
+- Services grid
+- Pricing cards
+- Gallery
+- Reviews / testimonials slider (JS)
+- FAQ accordion
+- Contact & booking form (front-end only)
+- Responsive layout
+- Basic accessibility attributes
+
+Notes:
+- Replace placeholder images (unsplash sample links) with your own or local images.
+- The contact form uses `mailto:` for demonstration. Hook it to backend or service (Formspree, Netlify Forms) for real submissions.
+-->
+
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Elite — Салон красоты</title>
+  <meta name="description" content="Elite — современный салон красоты. Услуги: стрижки, окрашивание, маникюр, косметология. Запись онлайн.">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;500;700;900&family=Nunito:wght@300;600;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    :root{
+      --bg:#0f1724; /* deep navy */
+      --card:#0b1120;
+      --accent1:#ff6b81; /* coral */
+      --accent2:#6ee7b7; /* mint */
+      --accent3:#7c5cff; /* violet */
+      --muted:#94a3b8;
+      --glass: rgba(255,255,255,0.04);
+      --radius:16px;
+      --max-width:1200px;
+      font-family: 'Nunito', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;background:linear-gradient(180deg,var(--bg),#061124);color:#e6eef8;line-height:1.5}
+    .container{max-width:var(--max-width);margin:0 auto;padding:28px}
+
+    header{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:14px 0}
+    .logo{display:flex;align-items:center;gap:12px}
+    .logo .mark{width:46px;height:46px;border-radius:10px;background:linear-gradient(135deg,var(--accent1),var(--accent3));display:flex;align-items:center;justify-content:center;font-weight:800}
+    nav a{color:var(--muted);text-decoration:none;margin-left:18px;font-weight:600}
+    nav a:hover{color:#fff}
+
+    .hero{display:grid;grid-template-columns:1fr 420px;gap:28px;align-items:center;padding:40px 0}
+    .hero-card{background:linear-gradient(180deg,rgba(255,255,255,0.02),transparent);padding:28px;border-radius:20px;backdrop-filter: blur(6px)}
+    .eyebrow{background:linear-gradient(90deg,var(--accent2),var(--accent3));display:inline-block;padding:6px 12px;border-radius:999px;font-weight:700;color:#082018}
+    h1{font-family:'Montserrat';font-size:40px;margin:14px 0 8px}
+    p.lead{color:var(--muted);margin-bottom:18px}
+    .cta{display:inline-block;padding:12px 20px;border-radius:12px;font-weight:700;background:linear-gradient(90deg,var(--accent1),var(--accent3));color:#061124;text-decoration:none}
+
+    .features{display:flex;gap:12px;margin-top:18px}
+    .feat{background:var(--glass);padding:10px 12px;border-radius:12px;font-weight:700;color:var(--muted)}
+
+    /* Right column — booking + quick info */
+    .booking{background:linear-gradient(180deg,#071026,rgba(255,255,255,0.02));padding:18px;border-radius:14px}
+    .booking h3{margin:0 0 8px;font-size:20px}
+    .time{display:flex;gap:8px;align-items:center}
+    .book-btn{display:block;margin-top:12px;padding:10px;border-radius:10px;text-align:center;text-decoration:none;font-weight:700;background:linear-gradient(90deg,var(--accent2),var(--accent3));color:#042016}
+
+    /* Services */
+    .section{padding:36px 0}
+    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:18px}
+    .service{background:linear-gradient(180deg,rgba(255,255,255,0.02),transparent);padding:18px;border-radius:14px}
+    .service h4{margin:8px 0}
+    .price{font-weight:800;color:var(--accent2)}
+
+    /* Gallery */
+    .gallery{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+    .gallery img{width:100%;height:160px;object-fit:cover;border-radius:12px}
+
+    /* Testimonials */
+    .testimonials{position:relative}
+    .test-card{background:linear-gradient(180deg,rgba(255,255,255,0.02),transparent);padding:18px;border-radius:14px;min-height:120px}
+    .stars{color:gold;margin-bottom:8px}
+    .test-controls{display:flex;gap:8px;justify-content:center;margin-top:14px}
+    .dot{width:10px;height:10px;border-radius:999px;background:#223247;display:inline-block}
+    .dot.active{background:linear-gradient(90deg,var(--accent1),var(--accent3))}
+
+    /* FAQ */
+    .faq-item{background:var(--card);padding:12px;border-radius:12px}
+    .faq-question{display:flex;justify-content:space-between;cursor:pointer}
+    .faq-answer{max-height:0;overflow:hidden;transition:max-height 300ms ease}
+
+    /* Footer */
+    footer{padding:28px 0;color:var(--muted)}
+
+    /* Responsive */
+    @media (max-width:900px){
+      .hero{grid-template-columns:1fr}
+      .gallery{grid-template-columns:repeat(2,1fr)}
+    }
+    @media (max-width:480px){
+      h1{font-size:28px}
+      .gallery img{height:120px}
+    }
+
+    /* small helpers */
+    .muted{color:var(--muted)}
+    .pill{display:inline-block;padding:6px 10px;border-radius:999px;background:var(--glass)}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="logo">
+        <div class="mark">E</div>
+        <div>
+          <div style="font-weight:800">Elite</div>
+          <div class="muted" style="font-size:12px">Салон красоты</div>
+        </div>
+      </div>
+      <nav aria-label="Основное меню">
+        <a href="#services">Услуги</a>
+        <a href="#gallery">Галерея</a>
+        <a href="#reviews">Отзывы</a>
+        <a href="#contact">Контакты</a>
+      </nav>
+    </header>
+
+    <main>
+      <section class="hero">
+        <div class="hero-card">
+          <span class="eyebrow">Premium</span>
+          <h1>Elite — Ваш персональный салон красоты</h1>
+          <p class="lead">Мы создаём образы: стрижки, кастомное окрашивание, маникюр и уход за лицом. Профессиональные мастера, уютная атмосфера и удобная запись.</p>
+          <a class="cta" href="#contact">Записаться онлайн</a>
+
+          <div class="features">
+            <div class="feat"><i class="fa-solid fa-award"></i> Премиум качество</div>
+            <div class="feat"><i class="fa-solid fa-calendar-check"></i> Удобная запись</div>
+            <div class="feat"><i class="fa-solid fa-hand-holding-dollar"></i> Прозрачные цены</div>
+          </div>
+
+          <div style="margin-top:18px" aria-hidden>
+            <strong>Акция:</strong> скидка 100% на первое посещение!
+          </div>
+        </div>
+
+        <aside class="booking" aria-labelledby="booking-title">
+          <h3 id="booking-title">Быстрая запись</h3>
+          <div class="muted">Рабочие часы</div>
+          <div class="time" style="margin-top:8px"><div class="pill">Пн–Пт: 09:00–20:00</div><div class="pill">Сб–Вс: 10:00–18:00</div></div>
+
+          <div style="margin-top:12px">
+            <strong>Наш телефон</strong>
+            <div class="muted">+7 (708) 181-58-05</div>
+          </div>
+
+          <a class="book-btn" href="#contact">Записаться</a>
+
+          <div style="margin-top:14px;font-size:13px" class="muted">Адрес: г. Уральск, ул. Айаруская 16</div>
+        </aside>
+      </section>
+
+      <section id="services" class="section">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <h2>Услуги</h2>
+          <div class="muted">Выберите услугу и узнайте цену</div>
+        </div>
+
+        <div class="grid" style="margin-top:12px">
+          <div class="service">
+            <h4>Стрижка</h4>
+            <p class="muted">Мужская, женская, детская — индивидуальный подход.</p>
+            <div style="margin-top:10px"><span class="price">от 10000 ₸</span></div>
+          </div>
+
+          <div class="service">
+            <h4>Окрашивание</h4>
+            <p class="muted">Блонд, омбре, балаяж, тонирование.</p>
+            <div style="margin-top:10px"><span class="price">от 8000 ₸</span></div>
+          </div>
+
+          <div class="service">
+            <h4>Маникюр & педикюр</h4>
+            <p class="muted">Классика, гель-лак, покрытие шеллак.</p>
+            <div style="margin-top:10px"><span class="price">от 2000 ₸</span></div>
+          </div>
+
+          <div class="service">
+            <h4>Косметология</h4>
+            <p class="muted">Уходовые процедуры, чистка лица, пилинги.</p>
+            <div style="margin-top:10px"><span class="price">от 5000 ₸</span></div>
+          </div>
+        </div>
+
+        <div style="margin-top:20px;display:flex;gap:12px;flex-wrap:wrap">
+          <div class="card" style="background:var(--card);padding:14px;border-radius:12px">Индивидуальные консультации стилиста</div>
+          <div class="card" style="background:var(--card);padding:14px;border-radius:12px">Подарочные сертификаты</div>
+        </div>
+      </section>
+
+      <section id="gallery" class="section">
+        <h2>Галерея</h2>
+        <div class="gallery" style="margin-top:12px">
+          <img src="https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?q=80&w=800&auto=format&fit=crop&ixlib=rb-4.0.3&s=0a5f8d8b2b8b3b6a" alt="gallery1">
+          <img src="https://images.unsplash.com/photo-1524253482453-3fed8d2fe12b?q=80&w=800&auto=format&fit=crop&ixlib=rb-4.0.3&s=4d9f0d8a3f0b1d2c" alt="gallery2">
+          <img src="https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?q=80&w=800&auto=format&fit=crop&ixlib=rb-4.0.3&s=3c1a3b2f4b5c6d7e" alt="gallery3">
+          <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=800&auto=format&fit=crop&ixlib=rb-4.0.3&s=78b2dd4f2f3f1a2b" alt="gallery4">
+        </div>
+      </section>
+
+      <section id="reviews" class="section testimonials">
+        <h2>Отзывы клиентов</h2>
+        <div id="testimonials-wrapper" style="margin-top:12px">
+          <div class="test-card" id="test-0">
+            <div class="stars">★★★★★</div>
+            <p><strong>Алена</strong> — Отличный салон! Сделали смелое окрашивание, всё аккуратно и быстро.</p>
+          </div>
+          <div class="test-card" id="test-1" style="display:none">
+            <div class="stars">★★★★★</div>
+            <p><strong>Марат</strong> — Вежливый персонал, классная стрижка. Рекомендую.</p>
+          </div>
+          <div class="test-card" id="test-2" style="display:none">
+            <div class="stars">★★★★☆</div>
+            <p><strong>Сауле</strong> — Хорошая работа мастера, уютная атмосфера. Немного долго по времени.</p>
+          </div>
+        </div>
+        <div class="test-controls">
+          <span class="dot active" data-index="0"></span>
+          <span class="dot" data-index="1"></span>
+          <span class="dot" data-index="2"></span>
+        </div>
+      </section>
+
+      <section class="section">
+        <h2>Цены — быстрый прайс</h2>
+        <div class="grid" style="margin-top:12px">
+          <div class="service">
+            <h4>Стрижка + укладка</h4>
+            <div class="price">3500 ₸</div>
+          </div>
+          <div class="service">
+            <h4>Окрашивание полного объёма</h4>
+            <div class="price">от 12000 ₸</div>
+          </div>
+          <div class="service">
+            <h4>Маникюр гель-лак</h4>
+            <div class="price">4500 ₸</div>
+          </div>
+          <div class="service">
+            <h4>Чистка лица</h4>
+            <div class="price">6000 ₸</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="faq">
+        <h2>Частые вопросы</h2>
+        <div style="margin-top:12px;display:grid;gap:10px">
+          <div class="faq-item">
+            <div class="faq-question"><span>Можно ли прийти без записи?</span><span class="muted">+</span></div>
+            <div class="faq-answer"><p class="muted">Лучше записываться заранее — особенно в выходные. Но при свободных мастерах вас примут.</p></div>
+          </div>
+          <div class="faq-item">
+            <div class="faq-question"><span>Какие средства вы используете?</span><span class="muted">+</span></div>
+            <div class="faq-answer"><p class="muted">Мы используем профессиональные бренды: L'Oréal Professionnel, OPI и другие.</p></div>
+          </div>
+        </div>
+      </section>
+
+      <section id="contact" class="section">
+        <h2>Контакты и запись</h2>
+        <div style="display:grid;grid-template-columns:1fr 420px;gap:18px;margin-top:12px">
+          <div style="background:var(--card);padding:16px;border-radius:12px">
+            <form id="contact-form">
+              <label class="muted">Ваше имя</label>
+              <input required name="name" placeholder="Иван" style="width:100%;padding:10px;margin-top:6px;border-radius:8px;border:0;background:rgba(255,255,255,0.02);color:inherit">
+
+              <label class="muted" style="margin-top:10px;display:block">Телефон или e‑mail</label>
+              <input required name="contact" placeholder="+7 (700) 123-45-67" style="width:100%;padding:10px;margin-top:6px;border-radius:8px;border:0;background:rgba(255,255,255,0.02);color:inherit">
+
+              <label class="muted" style="margin-top:10px;display:block">Услуга</label>
+              <select name="service" style="width:100%;padding:10px;margin-top:6px;border-radius:8px;border:0;background:rgba(255,255,255,0.02);color:inherit">
+                <option>Стрижка</option>
+                <option>Окрашивание</option>
+                <option>Маникюр</option>
+                <option>Косметология</option>
+              </select>
+
+              <button type="submit" style="margin-top:12px;padding:12px;border-radius:10px;border:0;background:linear-gradient(90deg,var(--accent1),var(--accent3));font-weight:800">Отправить</button>
+            </form>
+            <p class="muted" style="font-size:13px;margin-top:8px">Форма работает как пример; замените действие на ваш бэкенд или используйте Formspree.</p>
+          </div>
+
+          <div style="background:var(--card);padding:16px;border-radius:12px">
+            <strong>Адрес</strong>
+            <div class="muted">г. Нур-Султан, ул. Примерная 12</div>
+            <div style="margin-top:12px">
+              <!-- Replace src with your embedded map link if available -->
+              <iframe title="map" src="https://maps.google.com/maps?q=Astana&t=&z=13&ie=UTF8&iwloc=&output=embed" style="width:100%;height:220px;border:0;border-radius:10px;margin-top:8px"></iframe>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
+        <div>
+          <div style="font-weight:800">Elite</div>
+          <div class="muted" style="font-size:13px">© <span id="year"></span> Все права защищены</div>
+        </div>
+        <div class="muted">Телефон: +7 (700) 123-45-67 — <a href="#contact">Записаться</a></div>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    // Year auto-fill
+    document.getElementById('year').innerText = new Date().getFullYear();
+
+    // Testimonials simple slider
+    const tests = Array.from(document.querySelectorAll('[id^="test-"]'));
+    const dots = Array.from(document.querySelectorAll('.dot'));
+    let current = 0;
+    function showTest(i){
+      tests.forEach((t,idx)=>{t.style.display = idx===i? 'block' : 'none'});
+      dots.forEach((d,idx)=>d.classList.toggle('active', idx===i));
+      current = i;
+    }
+    dots.forEach(d=>d.addEventListener('click',()=>showTest(Number(d.dataset.index))));
+    // auto rotate
+    setInterval(()=>{showTest((current+1) % tests.length)}, 6000);
+
+    // FAQ accordion
+    document.querySelectorAll('.faq-item').forEach(item=>{
+      const q = item.querySelector('.faq-question');
+      const a = item.querySelector('.faq-answer');
+      q.addEventListener('click', ()=>{
+        const open = a.style.maxHeight && a.style.maxHeight !== '0px';
+        document.querySelectorAll('.faq-answer').forEach(x=>x.style.maxHeight = null);
+        if(!open){ a.style.maxHeight = a.scrollHeight + 'px'; }
+      });
+    });
+
+    // Contact form: demo handler
+    document.getElementById('contact-form').addEventListener('submit', function(e){
+      e.preventDefault();
+      const fm = new FormData(this);
+      // demo behavior: open mailto (user can change)
+      const name = fm.get('name');
+      const contact = fm.get('contact');
+      const service = fm.get('service');
+      const subject = encodeURIComponent('Запись в Elite — ' + service);
+      const body = encodeURIComponent(`Имя: ${name}%0AКонтакт: ${contact}%0AУслуга: ${service}`);
+      window.location.href = `mailto:elite@example.com?subject=${subject}&body=${body}`;
+    });
+  </script>
+</body>
+</html>
